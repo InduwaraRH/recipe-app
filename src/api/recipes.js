@@ -1,4 +1,5 @@
-const BASE = '/api/recipes';
+// Use environment variable for production, fallback to development proxy
+const BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/recipes` : '/api/recipes';
 
 function authHeaders(token) {
   return token ? { Authorization: `Bearer ${token}` } : {};

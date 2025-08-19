@@ -1,7 +1,12 @@
 import axios from 'axios'
 
+// Use environment variable for production, fallback to development proxy
+const baseURL = import.meta.env.VITE_API_URL || '/api'
+
+console.log('API Base URL:', baseURL) // Debug log
+
 const client = axios.create({
-  baseURL: '/api',
+  baseURL,
   withCredentials: true, // send/receive httpOnly cookies
   headers: { 'Content-Type': 'application/json' }
 })
@@ -22,6 +27,8 @@ client.interceptors.response.use(
   },
   error => {
     console.log('Response error:', error.response?.status, error.response?.data)
+    console.log('Error config:', error.config)
+    console.log('Full error:', error)
     return Promise.reject(error)
   }
 )
