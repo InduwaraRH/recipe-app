@@ -15,7 +15,6 @@ export default function Dashboard() {
   const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [modalId, setModalId] = useState(null)
 
-  // Show all categories instead of just top 5
   const allCategoryNames = useMemo(() => {
     console.log('allCategories in useMemo:', allCategories)
     const names = allCategories.map(c => c.strCategory)
@@ -28,7 +27,6 @@ export default function Dashboard() {
     recipesApi.getCategories().then(d => {
       console.log('Categories response:', d)
       console.log('Categories data:', d.categories)
-      // The API returns categories directly, not wrapped in a categories property
       const categories = Array.isArray(d) ? d : (d.categories || [])
       console.log('Processed categories:', categories)
       setAllCategories(categories)

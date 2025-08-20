@@ -1,4 +1,3 @@
-// RecipeModal.jsx
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as recipes from '../api/recipes.js'
@@ -19,8 +18,6 @@ export default function RecipeModal({ id, onClose }) {
 
     ;(async () => {
       try {
-        // If using cookies: { withCredentials: true }
-        // If using token: { token: yourToken }
         const d = await recipes.getById(id)
         if (!cancelled) setDetails(d)
       } catch (e) {
