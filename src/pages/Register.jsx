@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext.jsx'
+import Snackbar from '../components/Snackbar.jsx'
 
 export default function Register() {
   const { register } = useAuth()
@@ -10,6 +11,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showSnackbar, setShowSnackbar] = useState(false)
   const nav = useNavigate()
 
   const submit = async (e) => {
@@ -21,9 +23,15 @@ export default function Register() {
     console.log('Sending registration payload:', { email, password })
     
     try {
-      await register(email, password)
-      nav('/dashboard', { replace: true })
-    } catch (err) {
+        await register(email, password)
+        // Show success snackbar
+        setShowSnackbar(true)
+        // Navigate to login after a short delay to show the snackbar
+        setTimeout(() => {
+          nav('/login', { replace: true })
+        }, 1500)
+        } catch (err) {
+      
       console.error('Registration error:', err)
       console.error('Error response:', err.response)
       console.error('Error status:', err.response?.status)
@@ -98,6 +106,12 @@ export default function Register() {
           <button type="submit" disabled={loading} className="px-4 py-2 rounded-xl bg-indigo-600 text-white disabled:opacity-50">{loading?'Please wait…':'Create account'}</button>
         </motion.form>
       </div>
+      <Snackbar 
+        isVisible={showSnackbar} 
+        onClose={() => setShowSnackbar(false)} 
+        message="Account created. Please log in." 
+        type="success" 
+      />
     </div>
   )
 }
