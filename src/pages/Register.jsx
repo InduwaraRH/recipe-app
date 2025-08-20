@@ -1,87 +1,92 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { useAuth } from '../context/AuthContext.jsx'
-import Snackbar from '../components/Snackbar.jsx'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext.jsx';
+import Snackbar from '../components/Snackbar.jsx';
 
 export default function Register() {
-  const { register } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [showSnackbar, setShowSnackbar] = useState(false)
-  const nav = useNavigate()
+  const { register } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const nav = useNavigate();
 
   const submit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-    
-    // Debug: Log the payload being sent
-    console.log('Sending registration payload:', { email, password })
-    
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    console.log('Sending registration payload:', { email, password });
+
     try {
-        await register(email, password)
-        // Show success snackbar
-        setShowSnackbar(true)
-        // Navigate to login after a short delay to show the snackbar
-        setTimeout(() => {
-          nav('/login', { replace: true })
-        }, 1500)
-        } catch (err) {
-      
-      console.error('Registration error:', err)
-      console.error('Error response:', err.response)
-      console.error('Error status:', err.response?.status)
-      console.error('Error data:', err.response?.data)
-      console.error('Full error data:', JSON.stringify(err.response?.data, null, 2))
-      console.error('Errors array:', err.response?.data?.errors)
-      
-      // Handle validation errors from backend
+      await register(email, password);
+      setShowSnackbar(true);
+      setTimeout(() => {
+        nav('/login', { replace: true });
+      }, 1500);
+    } catch (err) {
+      console.error('Registration error:', err);
+      console.error('Error response:', err.response);
+      console.error('Error status:', err.response?.status);
+      console.error('Error data:', err.response?.data);
+      console.error('Full error data:', JSON.stringify(err.response?.data, null, 2));
+      console.error('Errors array:', err.response?.data?.errors);
+
       if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
-        const errorMessages = err.response.data.errors.map(error => {
-          if (error.path === 'password' && error.msg === 'Invalid value') {
-            return 'Password must be at least 6 characters long and contain a mix of letters, numbers, and special characters'
-          }
-          return error.msg || error.message || error
-        }).join(', ')
-        setError(errorMessages)
+        const errorMessages = err.response.data.errors
+          .map((error) => {
+            if (error.path === 'password' && error.msg === 'Invalid value') {
+              return 'Password must be at least 6 characters long and contain a mix of letters, numbers, and special characters';
+            }
+            return error.msg || error.message || error;
+          })
+          .join(', ');
+        setError(errorMessages);
       } else if (err.response?.data?.message) {
-        setError(err.response.data.message)
+        setError(err.response.data.message);
       } else if (err.message) {
-        setError(err.message)
+        setError(err.message);
       } else {
-        setError('Could not register. Please try again.')
+        setError('Could not register. Please try again.');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center p-6">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 w-full max-w-md p-8">
         <h1 className="text-2xl font-semibold text-center">Recipe App</h1>
         <div className="mt-6 flex gap-6 justify-center text-sm">
-          <Link className="pb-2 border-b-2 border-transparent hover:border-indigo-600" to="/login">Login</Link>
+          <Link className="pb-2 border-b-2 border-transparent hover:border-indigo-600" to="/login">
+            Login
+          </Link>
           <span className="pb-2 border-b-2 border-indigo-600">Register</span>
         </div>
-        <motion.form onSubmit={submit} initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} className="mt-6 space-y-4">
+        <motion.form onSubmit={submit} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-6 space-y-4">
           <div>
             <label className="text-sm text-gray-600">Email</label>
-            <input type="email" className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500" value={email} onChange={(e)=>setEmail(e.target.value)} required />
+            <input
+              type="email"
+              className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div>
             <label className="text-sm text-gray-600">Password</label>
             <div className="relative">
-              <input 
-                type={showPassword ? 'text' : 'password'} 
-                className="w-full rounded-xl border border-gray-300 px-3 py-2 pr-12 outline-none focus:ring-2 focus:ring-indigo-500" 
-                value={password} 
-                onChange={(e)=>setPassword(e.target.value)} 
-                required 
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="w-full rounded-xl border border-gray-300 px-3 py-2 pr-12 outline-none focus:ring-2 focus:ring-indigo-500"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <button
                 type="button"
@@ -100,18 +105,22 @@ export default function Register() {
                 )}
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Password must be at least 6 characters with letters, numbers, and special characters</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Password must be at least 6 characters with letters, numbers, and special characters
+            </p>
           </div>
           {error && <p className="text-sm text-rose-600">{error}</p>}
-          <button type="submit" disabled={loading} className="px-4 py-2 rounded-xl bg-indigo-600 text-white disabled:opacity-50">{loading?'Please wait…':'Create account'}</button>
+          <button type="submit" disabled={loading} className="px-4 py-2 rounded-xl bg-indigo-600 text-white disabled:opacity-50">
+            {loading ? 'Please wait…' : 'Create account'}
+          </button>
         </motion.form>
       </div>
-      <Snackbar 
-        isVisible={showSnackbar} 
-        onClose={() => setShowSnackbar(false)} 
-        message="Account created. Please log in." 
-        type="success" 
+      <Snackbar
+        isVisible={showSnackbar}
+        onClose={() => setShowSnackbar(false)}
+        message="Account created. Please log in."
+        type="success"
       />
     </div>
-  )
+  );
 }
